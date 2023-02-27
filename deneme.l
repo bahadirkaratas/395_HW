@@ -25,7 +25,8 @@
 "MINUS"      { return MINUS; }
 "="          { return ASSIGN; }
 ","          { return COMMA; }
-"!!".*       { /* Ignore comments */ }
+"!!".*       {  }
+(\')(.*)(\') { return MSG;}
 [a-zA-Z][a-zA-Z0-9]* { yylval.id = strdup(yytext); return ID; }
 [+-]?[0-9]+  { yylval.int_lit = atoi(yytext); return INT_LIT; }
 \n           { /* Ignore newlines */ }

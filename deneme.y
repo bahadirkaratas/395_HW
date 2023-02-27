@@ -33,7 +33,6 @@ char* id;
 %token SEMICOLON
 %token CANVAS_X
 %token CANVAS_Y
-
 %token CURSOR_X
 %token CURSOR_Y
 
@@ -41,6 +40,7 @@ char* id;
 %left PLUS MINUS
 
 %%
+
 
 PEAKASSO: PROGRAM id SEMICOLON canvas_init_section brush_declaration_section drawing_section;
 canvas_init_section: CANVAS_INIT_SECTION COLON canvas_size_init cursor_pos_init;
@@ -67,7 +67,7 @@ statement:renew_stmt
           | cursor_move_stmt;
 
 renew_stmt:
-    RENEW_BRUSH MSG brush_name
+    RENEW_BRUSH MSG brush_name SEMICOLON
     ;
 
 paint_stmt:
@@ -75,114 +75,34 @@ paint_stmt:
     ;
 
 exhibit_stmt:
-    EXHIBIT_CANVAS
+    EXHIBIT_CANVAS SEMICOLON
     ;
 
 cursor_move_stmt:
-    MOVE cursor TO expression
+    MOVE cursor TO expression SEMICOLON
     ;
 
 cursor:
     CURSOR_X | CURSOR_Y
     ;
 expression: term
-            | expression PLUS term
-            | expression MINUS term;
-term: factor;
+            | term PLUS expression_prime
+            | term MINUS expression_prime
+    ;
+expression_prime:
+            factor
+            |term PLUS expression_prime
+            | term MINUS expression_prime
+            | SEMICOLON
+    ; 
 
+term: factor;
 
 factor: INT_LIT
         | cursor
         | CANVAS_X
         | CANVAS_Y
         | expression;
-
-
-
-/*
-program:
-    PROGRAM ID SEMICOLON canvas_init_section brush_declaration_section 
-drawing_section { printf("Parsing successful!\n"); }
-    ;
-
-canvas_init_section:
-    CANVAS_INIT_SECTION COLON canvas_size_init cursor_pos_init
-    ;
-
-canvas_size_init:
-    CONST CANVAS_X EQUALS INT_LIT SEMICOLON CONST CANVAS_Y EQUALS INT_LIT 
-SEMICOLON
-    ;
-
-cursor_pos_init:
-    CURSOR_X EQUALS INT_LIT SEMICOLON CURSOR_Y EQUALS INT_LIT SEMICOLON
-    ;
-
-brush_declaration_section:
-    BRUSH_DECLARATION_SECTION COLON  variable_def_list 
-    ;
-
-variable_def_list:
-    variable_def | variable_def variable_def_list
-    ;
-
-variable_def:
-    BRUSH brush_list SEMICOLON
-    ;
-
-brush_list:
-    ID | ID EQUALS INT_LIT INT_LIT | ID EQUALS INT_LIT INT_LIT COMMA 
-brush_list
-    ;
-
-drawing_section:
-    DRAWING_SECTION COLON  statement_list 
-    ;
-
-statement_list:
-    statement | statement statement_list
-    ;
-
-statement:
-    renew_stmt | paint_stmt | exhibit_stmt | cursor_move_stmt
-    ;
-
-renew_stmt:
-    RENEW_BRUSH MSG brush_name paint_stmt
-    ;
-
-paint_stmt:
-    PAINT_CANVAS brush_name
-    ;
-
-exhibit_stmt:
-    EXHIBIT_CANVAS
-    ;
-
-cursor_move_stmt:
-    MOVE cursor TO expression
-    ;
-
-cursor:
-    CURSOR_X | CURSOR_Y
-    ;
-
-expression:
-    term | expression PLUS term | expression MINUS term
-    ;
-
-term:
-    factor
-    ;
-
-factor:
-    INT_LIT | cursor | CANVAS_X | CANVAS_Y | expression 
-    ;
-
-brush_name:
-    ID
-    ;
-*/
 %%
 int main() {
 
